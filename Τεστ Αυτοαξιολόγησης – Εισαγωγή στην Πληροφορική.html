@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Τεστ Αυτοαξιολόγησης – Εισαγωγή στην Πληροφορική</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f7f6f2;--card:#fff;--text:#1f2328;--muted:#5d6670;--border:#d9d6cc;--accent:#2f5fd0;--ok:#1f7a3d;--okbg:#e3f4e8;--bad:#b3261e;--badbg:#fbe6e4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16181c;--card:#1f2227;--text:#e8eaed;--muted:#9aa3ad;--border:#363a41;--accent:#7ea2ff;--ok:#6fd08c;--okbg:#17301f;--bad:#ff8a80;--badbg:#3a1b19}}
+:root[data-theme="dark"]{--bg:#16181c;--card:#1f2227;--text:#e8eaed;--muted:#9aa3ad;--border:#363a41;--accent:#7ea2ff;--ok:#6fd08c;--okbg:#17301f;--bad:#ff8a80;--badbg:#3a1b19}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.4rem;margin:0 0 4px}
+.sub{color:var(--muted);font-size:.9rem;margin-bottom:16px}
+.bar{height:8px;background:var(--border);border-radius:99px;overflow:hidden;margin:8px 0 18px}
+.bar div{height:100%;background:var(--accent);width:0;transition:width .3s}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.tag{display:inline-block;font-size:.75rem;color:var(--accent);border:1px solid var(--accent);border-radius:99px;padding:1px 10px;margin-bottom:10px}
+.q{font-size:1.05rem;font-weight:600;margin:0 0 14px;white-space:pre-line}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.opt.bad{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.exp{margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--bg);border-left:4px solid var(--accent);font-size:.95rem}
+.exp b.r{color:var(--ok)}.exp b.w{color:var(--bad)}
+.btn{margin-top:14px;font:inherit;font-weight:600;background:var(--accent);color:#fff;border:0;border-radius:10px;padding:10px 20px;cursor:pointer}
+@media (prefers-color-scheme:dark){.btn{color:#101216}}
+.score{font-size:2.4rem;font-weight:700;margin:6px 0}
+.top{display:flex;justify-content:space-between;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<h1>Τεστ Αυτοαξιολόγησης</h1>
+<div class="sub">Εισαγωγή στην Πληροφορική · 6 τυχαίες ερωτήσεις από τράπεζα 24 ερωτήσεων · κάθε νέο τεστ είναι διαφορετικό</div>
+<div class="top"><span id="prog"></span><span id="sc"></span></div>
+<div class="bar"><div id="fill"></div></div>
+<div class="card" id="box"></div>
+</main>
+<script>
+var BANK=[
+{t:"Δυαδικό σύστημα (Διάλεξη 3-4)",q:"Ποια είναι η δεκαδική τιμή του δυαδικού αριθμού (10101110)₂ ;",o:["166","172","174","178"],a:2,e:"Κάθε bit πολλαπλασιάζεται με τη δύναμη του 2 της θέσης του: 128 + 0 + 32 + 0 + 8 + 4 + 2 + 0 = 174. Οι υπόλοιπες τιμές προκύπτουν από λάθος άθροισμα των βαρών."},
+{t:"Πρόσθεση δυαδικών (Διάλεξη 3-4)",q:"Ποιο είναι το αποτέλεσμα της πρόσθεσης 1010 + 1110 στο δυαδικό σύστημα;",o:["10100","11000","11100","10110"],a:1,e:"Με τους κανόνες 1+1 = 0 (κρατούμενο 1) και 1+1+1 = 1 (κρατούμενο 1) προκύπτει 11000. Επαλήθευση: 10 + 14 = 24 = (11000)₂."},
+{t:"Λογικές πύλες (Διάλεξη 5-6)",q:"Ποια πύλη δίνει έξοδο 1 μόνο όταν και οι δύο είσοδοι έχουν την ίδια τιμή (και οι δύο 0 ή και οι δύο 1);",o:["XOR","XNOR","NAND","NOR"],a:1,e:"Η XNOR είναι η άρνηση της XOR: δίνει 1 για τις εισόδους (0,0) και (1,1) και 0 για τις (0,1) και (1,0). Η XOR δίνει 1 μόνο όταν οι είσοδοι διαφέρουν."},
+{t:"Κωδικοποίηση (Διάλεξη 5-6)",q:"Ένα κατάστημα έχει 140 διαφορετικά προϊόντα και θέλει bar code με σταθερό πλήθος bit. Πόσα bit χρειάζονται κατ’ ελάχιστο;",o:["7 bit","8 bit","10 bit","14 bit"],a:1,e:"Με 7 bit έχουμε 2⁷ = 128 συνδυασμούς, που δεν επαρκούν για 140 προϊόντα. Με 8 bit έχουμε 2⁸ = 256 > 140, άρα χρειάζονται 8 bit."},
+{t:"Μεταβλητές και τελεστές (Διάλεξη 7)",q:"Δίνονται οι εντολές:\nint a = 1;\nint b = 1 + ++a;\nΠοιες είναι οι τελικές τιμές των a και b;",o:["a = 1, b = 2","a = 2, b = 2","a = 2, b = 3","a = 3, b = 3"],a:2,e:"Ο τελεστής ++a αυξάνει πρώτα το a κατά 1 (a = 2) και μετά χρησιμοποιείται στην παράσταση: b = 1 + 2 = 3. Αν ήταν a++, θα χρησιμοποιούνταν πρώτα η τιμή 1 και θα ήταν b = 2."},
+{t:"HTML (Διάλεξη 10)",q:"Ποια ιδιότητα (attribute) του tag <a> ορίζει τον σύνδεσμο προς τον οποίο θα μεταφερθεί ο χρήστης;",o:["src","alt","target","href"],a:3,e:"Η ιδιότητα href ορίζει τον προορισμό του συνδέσμου. Η target καθορίζει πού θα ανοίξει το νέο περιεχόμενο (π.χ. _blank), ενώ οι src και alt αφορούν το <img>."},
+{t:"Δεκαδικό σύστημα (Διάλεξη 3-4)",q:"Ποια είναι η μέγιστη τιμή που μπορεί να αναπαρασταθεί στο δεκαδικό σύστημα με k = 3 ψηφία;",o:["999","1000","1001","99"],a:0,e:"Ο τύπος είναι Nmax = 10ᵏ − 1. Για k = 3: 10³ − 1 = 1000 − 1 = 999."},
+{t:"Δεκαδικό σε δυαδικό (Διάλεξη 3-4)",q:"Ποια είναι η δυαδική αναπαράσταση του (58)₁₀ ;",o:["111010","110110","111001","101110"],a:0,e:"58 = 32 + 16 + 8 + 2, άρα έχουμε 1 στα βάρη 32, 16, 8 και 2: 111010."},
+{t:"Δεκαεξαδικό (Διάλεξη 3-4)",q:"Ποιος είναι ο δεκαεξαδικός του (1101001011101010)₂ ;",o:["D2EA","B2EA","D2AE","2DEA"],a:0,e:"Ομαδοποιούμε ανά 4 bit από το LSB: 1101 | 0010 | 1110 | 1010 = D | 2 | E | A, δηλαδή 0xD2EA."},
+{t:"Οκταδικό (Διάλεξη 3-4)",q:"Ποιος είναι ο οκταδικός του (001011101010)₂ ;",o:["1352","1253","2352","1342"],a:0,e:"Ομαδοποιούμε ανά 3 bit: 001 | 011 | 101 | 010 = 1 | 3 | 5 | 2, δηλαδή (1352)₈."},
+{t:"Αφαίρεση δυαδικών (Διάλεξη 3-4)",q:"Ποιο είναι το αποτέλεσμα της αφαίρεσης 1110 − 0011 στο δυαδικό;",o:["1011","1001","1101","0101"],a:0,e:"Δεκαδικά 14 − 3 = 11, και 11 = (1011)₂."},
+{t:"Πολλαπλασιασμός δυαδικών (Διάλεξη 3-4)",q:"Ποιο είναι το αποτέλεσμα του 101 × 110 στο δυαδικό;",o:["11110","11100","10110","11011"],a:0,e:"Δεκαδικά 5 × 6 = 30 = (11110)₂. Στα μερικά γινόμενα: 000, 101 και 101 μετατοπισμένα και προστιθέμενα."},
+{t:"Διαίρεση δυαδικών (Διάλεξη 3-4)",q:"Ποιο είναι το πηλίκο της διαίρεσης 10011100 / 110 (δηλαδή 156 / 6);",o:["11010 (26)","10110 (22)","11100 (28)","1101 (13)"],a:0,e:"156 / 6 = 26 και 26 = (11010)₂. Στην παράδοση, το πηλίκο εμφανίζεται ως 011010."},
+{t:"Πύλη AND (Διάλεξη 5-6)",q:"Πότε δίνει έξοδο 1 η πύλη AND δύο εισόδων;",o:["Μόνο όταν και οι δύο είσοδοι είναι 1","Όταν τουλάχιστον μία είσοδος είναι 1","Μόνο όταν οι είσοδοι διαφέρουν","Όταν και οι δύο είσοδοι είναι 0"],a:0,e:"Από τον πίνακα αλήθειας του AND, η έξοδος είναι 1 μόνο για a = 1 και b = 1."},
+{t:"Πύλη NOR (Διάλεξη 5-6)",q:"Πότε δίνει έξοδο 1 η πύλη NOR δύο εισόδων;",o:["Μόνο όταν και οι δύο είσοδοι είναι 0","Μόνο όταν και οι δύο είσοδοι είναι 1","Όταν οι είσοδοι διαφέρουν","Πάντα"],a:0,e:"Η NOR είναι η άρνηση της OR. Η OR δίνει 0 μόνο για (0,0), άρα η NOR δίνει 1 μόνο για (0,0)."},
+{t:"ASCII (Διάλεξη 5-6)",q:"Πόσους διαφορετικούς χαρακτήρες μπορεί να κωδικοποιήσει το ASCII με 7 bit;",o:["128","256","64","7"],a:0,e:"Με 7 bit υπάρχουν 2⁷ = 128 διαφορετικοί συνδυασμοί."},
+{t:"Μετάδοση βίντεο (Διάλεξη 5-6)",q:"Εικόνα 640×480 pixel με 256 αποχρώσεις (8 bit) προβάλλεται με 25 καρέ/δευτερόλεπτο. Ποια χωρητικότητα καναλιού απαιτείται;",o:["61.440.000 bps","2.457.600 bps","7.680.000 bps","15.360.000 bps"],a:0,e:"Ένα καρέ = 640 × 480 × 8 = 2.457.600 bit. Για 25 καρέ/δευτερόλεπτο: 2.457.600 × 25 = 61.440.000 bps."},
+{t:"Κωδικοποίηση κειμένου (Διάλεξη 5-6)",q:"Ποια κωδικοποίηση χαρακτήρων χρησιμοποιείται στον Παγκόσμιο Ιστό (WWW);",o:["UTF-8","ASCII 7 bit","ISO 8859-7","UTF-32"],a:0,e:"Η παράδοση αναφέρει το UTF-8 ως την κωδικοποίηση του Παγκόσμιου Ιστού. Η ISO 8859-7 καλύπτει ελληνικούς χαρακτήρες σε 8 bit."},
+{t:"Σύνθετοι τελεστές (Διάλεξη 7)",q:"Αν a = 13 και b = 5, ποια είναι η τιμή του a μετά την εντολή a %= b;",o:["3","2","8","65"],a:0,e:"Το a %= b ισοδυναμεί με a = a % b, δηλαδή το υπόλοιπο της διαίρεσης 13 / 5, που είναι 3."},
+{t:"Τύποι δεδομένων (Διάλεξη 7)",q:"Ποιο είναι το εύρος και το μέγεθος του unsigned short int;",o:["0 έως 65.535, 2 byte","-32.768 έως 32.767, 2 byte","0 έως 4.294.967.295, 4 byte","0 έως 255, 1 byte"],a:0,e:"Ο unsigned short int έχει 2 byte (16 bit), άρα 2¹⁶ = 65.536 τιμές, από 0 έως 65.535."},
+{t:"Μνήμη cache (Διάλεξη 7)",q:"Τι εκφράζει η αρχή της προσωρινής τοπικότητας στη μνήμη cache;",o:["Η ίδια διεύθυνση μπορεί να ζητηθεί ξανά (π.χ. σε βρόχο επανάληψης)","Θα ζητηθούν και οι γειτονικές διευθύνσεις","Η cache είναι πάντα μεγαλύτερη από την κεντρική μνήμη","Κάθε μπλοκ της cache αντιστοιχεί σε σταθερή διεύθυνση"],a:0,e:"Η προσωρινή τοπικότητα αφορά την επαναχρησιμοποίηση της ίδιας διεύθυνσης. Η δεύτερη επιλογή περιγράφει τη χωρική τοπικότητα."},
+{t:"Καταχωρητές (Διάλεξη 7)",q:"Τι δείχνει ο καταχωρητής PC (Program Counter);",o:["Τη διεύθυνση της επόμενης προς εκτέλεση εντολής","Τη διεύθυνση της μνήμης για ανάγνωση δεδομένων","Τη θέση στη στοίβα (σωρό)","Την κατάσταση του μικροεπεξεργαστή"],a:0,e:"Ο PC δείχνει την επόμενη εντολή. Ο MAR κρατά διευθύνσεις μνήμης, ο SP τη θέση στο σωρό και ο SR την κατάσταση."},
+{t:"Polling (Διάλεξη 7)",q:"Ποιο είναι μειονέκτημα της τεχνικής polling;",o:["Χαμένος χρόνος όταν δεν υπάρχουν αιτήματα από συσκευές","Πολύπλοκη σχεδίαση του συστήματος","Πολύπλοκα κυκλώματα διασύνδεσης συσκευών","Δεν επιτρέπει σύνδεση συσκευών"],a:0,e:"Στο polling ο επεξεργαστής ελέγχει διαρκώς για αιτήματα και χάνει χρόνο όταν δεν υπάρχουν. Η πολυπλοκότητα κυκλωμάτων αφορά τις διακοπές (interrupts)."},
+{t:"HTML elements (Διάλεξη 10)",q:"Ποιο από τα παρακάτω είναι stand-alone element, δηλαδή δεν περιέχει άλλο περιεχόμενο;",o:["<br/>","<p>","<body>","<h1>"],a:0,e:"Τα <br/> και <img/> είναι stand-alone. Τα <p>, <body> και <h1> είναι container elements που περιέχουν κείμενο ή άλλα elements."},
+{t:"Cookies (Διάλεξη 10)",q:"Πώς λειτουργούν τα cookies;",o:["Ο browser τα αποθηκεύει τοπικά και τα στέλνει στον server σε κάθε επόμενη επίσκεψη","Ο server τα αποθηκεύει και δεν φτάνουν ποτέ στον browser","Αποθηκεύονται μόνο στη βάση δεδομένων του server","Χρησιμεύουν μόνο για τη μορφοποίηση της σελίδας"],a:0,e:"Ο server στέλνει το cookie, ο browser το αποθηκεύει στο τοπικό σύστημα αρχείων και το στέλνει πίσω σε κάθε επίσκεψη, ώστε ο server να ταυτοποιήσει τον χρήστη."}
+];
+var Q=[],i=0,score=0,box=document.getElementById("box");
+function rnd(){return Math.random()-0.5;}
+function newRound(){Q=BANK.slice().sort(rnd).slice(0,6).map(function(d){var c=d.o[d.a],o=d.o.slice().sort(rnd);return{t:d.t,q:d.q,o:o,a:o.indexOf(c),e:d.e};});i=0;score=0;}
+function head(){document.getElementById("prog").textContent=i<Q.length?"Ερώτηση "+(i+1)+" από "+Q.length:"Ολοκληρώθηκε";document.getElementById("sc").textContent="Σκορ: "+score+"/"+Q.length;document.getElementById("fill").style.width=(i/Q.length*100)+"%";}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e;}
+function show(){
+head();box.innerHTML="";
+if(i>=Q.length){
+var p=Math.round(score/Q.length*100);
+box.appendChild(el("div","tag","Αποτέλεσμα"));
+box.appendChild(el("div","score",score+" / "+Q.length+" ("+p+"%)"));
+box.appendChild(el("p","",p>=84?"Εξαιρετικά! Η ύλη φαίνεται καλά καλυμμένη.":p>=50?"Καλή προσπάθεια. Ξαναδές τις εξηγήσεις των λαθών.":"Χρειάζεται επανάληψη στην ύλη των διαλέξεων."));
+var r=el("button","btn","Νέο τεστ με νέες ερωτήσεις");r.onclick=function(){newRound();show();};box.appendChild(r);return;}
+var d=Q[i];
+box.appendChild(el("div","tag",d.t));
+box.appendChild(el("p","q",d.q));
+var bs=[],done=false;
+d.o.forEach(function(t,k){
+var b=el("button","opt",String.fromCharCode(65+k)+". "+t);
+b.onclick=function(){
+if(done)return;done=true;
+var ok=k===d.a;if(ok)score++;
+bs.forEach(function(x,j){x.disabled=true;if(j===d.a)x.classList.add("ok");else if(j===k)x.classList.add("bad");});
+var ex=el("div","exp");
+var s=el("b",ok?"r":"w",ok?"Σωστό! ":"Λάθος. ");
+ex.appendChild(s);ex.appendChild(document.createTextNode((ok?"":"Σωστή απάντηση: "+String.fromCharCode(65+d.a)+". ")+d.e));
+box.appendChild(ex);
+var n=el("button","btn",i<Q.length-1?"Επόμενη ερώτηση":"Δες το αποτέλεσμα");
+n.onclick=function(){i++;show();};box.appendChild(n);
+document.getElementById("sc").textContent="Σκορ: "+score+"/"+Q.length;
+};
+bs.push(b);box.appendChild(b);
+});
+}
+newRound();show();
+</script>
+</body>
+</html>
